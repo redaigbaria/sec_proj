@@ -27,20 +27,42 @@ def analyze_func(proj, fun):
 
 def main():
     core_path = "/home/reda/my_binaries"
-    for proj in os.listdir(core_path):
-        proj = angr.Project(os.path.join(core_path, proj))
-        proj.analyses.CFGFast()
+    for proj_name in os.listdir(core_path):
+        if os.path.exists(f"dumps/{proj_name}_functions.pkl"):
+            continue
+        print(f"analysing proj: {proj_name}")
+        proj_path = os.path.join(core_path, proj_name)
+        try:
+            proj = angr.Project(proj_path)
+        except Exception as e:
+            print(f"{proj_name} loading failed")
+            print(e)
+            continue
+        # proj.analyses.CFGFast()
         funcs = get_functions(proj)
-        pickle.dump(funcs, open(f"dumps/{proj}.pkl", "wb"))
-        analysis = dict()
-        for fun in funcs:
-            analysis[fun.name] = analyze_func(proj, fun)
-        pickle.dump(analysis, open(f"dumps/{proj}_analysis.pkl", "wb"))
+        pickle.dump(funcs, open(f"dumps/{proj_name}_functions.pkl", "wb"))
+        # analysis = dict()
+        # for fun in funcs:
+        #     analysis[fun.name] = analyze_func(proj, fun)
+        # pickle.dump(analysis, open(f"dumps/{proj}_analysis.pkl", "wb"))
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    hist = dict()
+    p = "dumps"
+    for name in os.listdir(p):
+        funcs = pickle.load(open(f"dumps/{name}", "rb"))
+        for f in funcs:
+            hist[f.name] = hist.get(f.name, 0) +  1
+    b = list(hist.items())
+    b.sort(key=lambda x: x[1], reverse=True)
+    print(b)
+    c = 0
+    for k,v in b:
+        c += v
 
+    print(c)
     # move binaries
     #  ls -al  | grep ^-rwxr | awk '{print $(NF)}' | while read line;do mv $line ~/my_binaries/;done
     # 
