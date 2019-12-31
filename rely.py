@@ -1,4 +1,5 @@
 import angr
+import re
 
 bases_dict = dict()
 replacement_dict = dict()
@@ -88,8 +89,14 @@ def main():
     for k, v in replacement_dict.items():
         print(f"{hex(k)}: {v}")
     print(bases_dict)
+    conts = ""
     for st in sm.deadended:
-        print(st.solver.constraints)
+        conts += str(st.solver.constraints)
+    for k,v in replacement_dict.items():
+        # conts = conts.replace(format(k, 'x'), v)
+        conts = re.sub(f"(0x|mem_){format(k, 'x')}[_0-9]*", v, conts)
+    print(conts)
+
 
 if __name__ == '__main__':
     main()
