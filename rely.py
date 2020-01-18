@@ -66,24 +66,22 @@ def address_breakfun(state):
             replacement_dict[state.inspect.address_concretization_result[0]] = f"{bases_dict[base]}({offset})"
 
 
-
-
 # constraints
 def my_bp(state):
     pass
+
 
 # symbolic_variable
 def my_bp2(state):
     pass
 
+
 def main():
-    proj = angr.Project("./bbuble", auto_load_libs=False)
+    proj = angr.Project("./core_utils_bins/head", auto_load_libs=False)
     proj.analyses.CFGFast()
-    fn = proj.kb.functions['bubbleSort']
+    fn = proj.kb.functions['head_bytes']
     st = proj.factory.call_state(fn.addr)
     st.inspect.b('address_concretization', when=angr.BP_AFTER, action=address_breakfun)
-    # st.inspect.b('constraints', when=angr.BP_AFTER, action=my_bp)
-    # st.inspect.b('symbolic_variable', when=angr.BP_BOTH, action=my_bp2)
     sm = proj.factory.simulation_manager(st)
     sm.run()
     for k, v in replacement_dict.items():
@@ -92,8 +90,7 @@ def main():
     conts = ""
     for st in sm.deadended:
         conts += str(st.solver.constraints)
-    for k,v in replacement_dict.items():
-        # conts = conts.replace(format(k, 'x'), v)
+    for k, v in replacement_dict.items():
         conts = re.sub(f"(0x|mem_){format(k, 'x')}[_0-9]*", v, conts)
     print(conts)
 

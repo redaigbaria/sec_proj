@@ -4,7 +4,7 @@ import pickle
 
 
 def is_qualified(symbol):
-    avoid = set(['main', 'usage'])
+    avoid = {'main', 'usage'}
     return symbol.is_function and symbol.is_export and not (symbol.name.startswith("_") or symbol.name in avoid)
 
 
@@ -22,7 +22,7 @@ def analyze_func(proj, fun):
     sm = proj.factory.simulation_manager(call_state)
     sm.run()
     print(f"finished {fun.name}")
-    return sm.stashes
+    return sm.deadended
 
 
 def main():
@@ -47,8 +47,34 @@ def main():
         # pickle.dump(analysis, open(f"dumps/{proj}_analysis.pkl", "wb"))
 
 
+def block_to_ins(block: angr.block.Block):
+    result = []
+    for ins in block.capstone.insns:
+        op_str = ins.op_str
+        operands = op_str.strip(" ").split(",")
+        operands = [i.strip().replace("[","").replace("]", "") for i in operands if i != ""]
+        operands += ['UNK', 'UNK']
+        result.append(f"{ins.mnemonic},{operands[0]},{operands[1]}".replace(" ", "|"))
+    return " ".join(result)
+
+
+def train_input():
+    proj = angr.Project("test_binary")
+    proj.analyses.CFGFast()
+    funcs = get_functions(proj)
+    output = open("generated_input.txt", "w")
+    test_func = funcs[2]
+    constraints = analyze_func(proj, test_func)
+    for constraint in constraints:
+        blocks = [proj.factory.block(baddr) for baddr in constraint.history.bbl_addrs]
+        processsed_code = " ".join(list(map(block_to_ins, blocks)))
+        output.write(f"{test_func.name} {processsed_code} CONS,CONS,CONS\n")
+
+
 if __name__ == "__main__":
     # main()
+    train_input()
+    exit()
     hist = dict()
     p = "dumps"
     for name in os.listdir(p):
