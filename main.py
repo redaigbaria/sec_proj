@@ -63,12 +63,12 @@ def train_input():
     proj.analyses.CFGFast()
     funcs = get_functions(proj)
     output = open("generated_input.txt", "w")
-    test_func = funcs[2]
-    constraints = analyze_func(proj, test_func)
-    for constraint in constraints:
-        blocks = [proj.factory.block(baddr) for baddr in constraint.history.bbl_addrs]
-        processsed_code = " ".join(list(map(block_to_ins, blocks)))
-        output.write(f"{test_func.name} {processsed_code} CONS,CONS,CONS\n")
+    for test_func in funcs:
+        constraints = analyze_func(proj, test_func)
+        for constraint in constraints:
+            blocks = [proj.factory.block(baddr) for baddr in constraint.history.bbl_addrs]
+            processsed_code = " ".join(list(map(block_to_ins, blocks)))
+            output.write(f"{test_func.name} {processsed_code} CONS,CONS,CONS\n")
 
 
 if __name__ == "__main__":
