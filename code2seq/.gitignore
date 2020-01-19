@@ -4,4 +4,7 @@
 *.iml
 *.xml
 *.pyc
-data
+*.raw.txt
+
+./data/java*
+models

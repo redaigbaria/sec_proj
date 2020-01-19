@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     np.random.seed(args.seed)
     tf.set_random_seed(args.seed)
-
+    print(args)
     if args.debug:
         config = Config.get_debug_config(args)
     else:
