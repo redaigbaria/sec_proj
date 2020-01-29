@@ -72,7 +72,7 @@ def analyze_func(proj, fun, cfg):
     call_state = proj.factory.call_state(fun.rebased_addr)
     call_state.inspect.b('address_concretization', when=angr.BP_AFTER, action=address_breakfun)
     sm = proj.factory.simulation_manager(call_state)
-    sm.use_technique(angr.exploration_techniques.LoopSeer(cfg=cfg, bound=4))
+    sm.use_technique(angr.exploration_techniques.LoopSeer(cfg=cfg, bound=2))
     sm.run()
     print(f"finished {fun.name}")
     return sm.deadended
@@ -106,19 +106,19 @@ def block_to_ins(block: angr.block.Block):
         op_str = ins.op_str
         operands = op_str.strip(" ").split(",")
         operands = [i.strip().replace("[","").replace("]", "") for i in operands if i != ""]
-        operands += ['UNK', 'UNK']
-        result.append(f"{ins.mnemonic},{operands[0]},{operands[1]}".replace(" ", "|"))
-    return " ".join(result)
+        operands += ['', '']
+        result.append(f"{ins.mnemonic}|{operands[0]}|{operands[1]}".replace(" ", "|"))
+    return "|".join(result)
 
 
 def cons_to_triple(constraint):
     if constraint.concrete:
         return ""
     if len(constraint.args) == 1:
-        return f'{constraint.op}{cons_to_triple(constraint.args[0])}'
+        return f'{constraint.op}|{cons_to_triple(constraint.args[0])}'
     arg1 = f'{constraint.args[0]}'
     arg2 = f'{constraint.args[1]}'
-    return f'{constraint.op},{arg1.replace(" ", "|")},{arg2.replace(" ", "|")}'
+    return f'{constraint.op}|{arg1.replace(" ", "|")}|{arg2.replace(" ", "|")}'
 
 
 def relify(conts):
@@ -131,17 +131,17 @@ def train_input():
     proj = angr.Project("test_binary", auto_load_libs=False)
     cfg = proj.analyses.CFGFast()
     funcs = get_functions(proj)
-    output = open("generated_input.txt", "w")
+    output = open("generated_input2.txt", "w")
     for test_func in funcs:
         bases_dict.clear()
         replacement_dict.clear()
         constraints = analyze_func(proj, test_func, cfg)
         for constraint in constraints:
             blocks = [proj.factory.block(baddr) for baddr in constraint.history.bbl_addrs]
-            processsed_code = " ".join(list(map(block_to_ins, blocks)))
-            processed_consts = " ".join(list(map(cons_to_triple, constraint.solver.constraints)))
+            processsed_code = "|".join(list(map(block_to_ins, blocks)))
+            processed_consts = "|".join(list(map(cons_to_triple, constraint.solver.constraints)))
             relified_consts = relify(processed_consts)
-            output.write(f"{test_func.name} {processsed_code} CONS,CONS,CONS {relified_consts}\n")
+            output.write(f"{test_func.name} DUM,{processsed_code}|CONS|{relified_consts},DUM\n")
 
 
 if __name__ == "__main__":
