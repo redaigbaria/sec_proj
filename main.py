@@ -4,6 +4,7 @@ import angr
 import os
 import pickle
 import re
+import shutil
 
 bases_dict = dict()
 replacement_dict = dict()
@@ -20,8 +21,8 @@ def address_breakfun(state):
     # print(f"{hex(state.inspect.address_concretization_result[0])}")
     # print(f"{state.inspect.address_concretization_expr}")
     expr = state.inspect.address_concretization_expr
-    if expr.depth > 2:
-        raise Exception("should consider a new approach, your assumption is wrong!!")
+    # if expr.depth > 2:
+    #     raise Exception("should consider a new approach, your assumption is wrong!!")
     if expr.depth == 1:
         if expr.op != "BVS":
             raise Exception("AAAAAA!!!")
@@ -34,7 +35,8 @@ def address_breakfun(state):
     else:
         # depth is 2 (either a new sym-var is being declared or offset calc)
         if expr.op != "__add__":
-            raise Exception("AAAAAA!!!")
+            print(f"found new op: {expr.op}")
+            return
         childs = list(expr.args)
         assert len(childs) < 3
         if len(childs) == 1:
@@ -52,6 +54,8 @@ def address_breakfun(state):
                     base = state.solver.eval(c)
                 else:
                     offset = state.solver.eval(c)
+            if base not in bases_dict:
+                return
             replacement_dict[state.inspect.address_concretization_result[0]] = f"{bases_dict[base]}({offset})"
 
 def is_qualified(symbol):
@@ -106,19 +110,23 @@ def block_to_ins(block: angr.block.Block):
         op_str = ins.op_str
         operands = op_str.strip(" ").split(",")
         operands = [i.strip().replace("[","").replace("]", "") for i in operands if i != ""]
-        operands += ['', '']
-        result.append(f"{ins.mnemonic}|{operands[0]}|{operands[1]}".replace(" ", "|"))
+        parsed_ins = [ins.mnemonic] + list(filter(None, operands))
+        result.append("|".join(parsed_ins).replace(" ", "|") + "\t")
+        # result.append(f"{ins.mnemonic}|{operands[0]}|{operands[1]}".replace(" ", "|"))
     return "|".join(result)
 
 
 def cons_to_triple(constraint):
     if constraint.concrete:
         return ""
-    if len(constraint.args) == 1:
-        return f'{constraint.op}|{cons_to_triple(constraint.args[0])}'
-    arg1 = f'{constraint.args[0]}'
-    arg2 = f'{constraint.args[1]}'
-    return f'{constraint.op}|{arg1.replace(" ", "|")}|{arg2.replace(" ", "|")}'
+    # if len(constraint.args) == 1:
+    #     return f'{constraint.op}|{cons_to_triple(constraint.args[0])}'
+    # arg1 = f'{constraint.args[0]}'
+    # arg2 = f'{constraint.args[1]}'
+    args = list(filter(None, map(str, constraint.args)))
+    triple = [constraint.op] + args
+    return "|".join(triple).replace(" ", "|") + "\t"
+    # return f'{constraint.op}|{arg1.replace(" ", "|")}|{arg2.replace(" ", "|")}'
 
 
 def relify(conts):
@@ -128,20 +136,29 @@ def relify(conts):
 
 
 def train_input():
-    proj = angr.Project("test_binary", auto_load_libs=False)
+    proj = angr.Project("core_utils_bins/ls", auto_load_libs=False)
     cfg = proj.analyses.CFGFast()
     funcs = get_functions(proj)
-    output = open("generated_input2.txt", "w")
+    output_name = "ls_test.txt"
+    output = open(output_name, "w")
+    dataset_name = "assembly"
     for test_func in funcs:
         bases_dict.clear()
         replacement_dict.clear()
-        constraints = analyze_func(proj, test_func, cfg)
-        for constraint in constraints:
-            blocks = [proj.factory.block(baddr) for baddr in constraint.history.bbl_addrs]
-            processsed_code = "|".join(list(map(block_to_ins, blocks)))
-            processed_consts = "|".join(list(map(cons_to_triple, constraint.solver.constraints)))
+        exec_paths = analyze_func(proj, test_func, cfg)
+        if len(exec_paths) == 0:
+            continue
+        for exec_path in exec_paths:
+            blocks = [proj.factory.block(baddr) for baddr in exec_path.history.bbl_addrs]
+            processsed_code = "|".join(list(filter(None, map(block_to_ins, blocks))))
+            processed_consts = "|".join(list(filter(None, map(cons_to_triple, exec_path.solver.constraints))))
             relified_consts = relify(processed_consts)
             output.write(f"{test_func.name} DUM,{processsed_code}|CONS|{relified_consts},DUM\n")
+    output.close()
+    # shutil.copy2(output_name, f"code2seq/{dataset_name}.train.raw.txt")
+    # shutil.copy2(output_name, f"code2seq/{dataset_name}.val.raw.txt")
+    # shutil.copy2(output_name, f"code2seq/{dataset_name}.test.raw.txt")
+    # os.remove(output_name)
 
 
 if __name__ == "__main__":
@@ -153,7 +170,7 @@ if __name__ == "__main__":
     for name in os.listdir(p):
         funcs = pickle.load(open(f"dumps/{name}", "rb"))
         for f in funcs:
-            hist[f.name] = hist.get(f.name, 0) +  1
+            hist[f.name] = hist.get(f.name, 0) + 1
     b = list(hist.items())
     b.sort(key=lambda x: x[1], reverse=True)
     print(b)
