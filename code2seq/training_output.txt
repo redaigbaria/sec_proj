@@ -1,0 +1,775 @@
+/home/redaigbaria/miniconda3/envs/cs236781-hw/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:526: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint8 = np.dtype([("qint8", np.int8, 1)])
+/home/redaigbaria/miniconda3/envs/cs236781-hw/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:527: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint8 = np.dtype([("quint8", np.uint8, 1)])
+/home/redaigbaria/miniconda3/envs/cs236781-hw/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:528: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint16 = np.dtype([("qint16", np.int16, 1)])
+/home/redaigbaria/miniconda3/envs/cs236781-hw/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:529: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint16 = np.dtype([("quint16", np.uint16, 1)])
+/home/redaigbaria/miniconda3/envs/cs236781-hw/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:530: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint32 = np.dtype([("qint32", np.int32, 1)])
+/home/redaigbaria/miniconda3/envs/cs236781-hw/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:535: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  np_resource = np.dtype([("resource", np.ubyte, 1)])
+Namespace(data_path='data/assembly/assembly', debug=False, load_path=None, predict=False, release=False, save_path_prefix='models/assembly/model', seed=239, test_path='data/assembly/assembly.val.c2s')
+2020-02-01 23:40:16.151460: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2020-02-01 23:40:16.181995: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2100015000 Hz
+2020-02-01 23:40:16.187517: I tensorflow/compiler/xla/service/service.cc:150] XLA service 0x5645c0abe820 executing computations on platform Host. Devices:
+2020-02-01 23:40:16.187553: I tensorflow/compiler/xla/service/service.cc:158]   StreamExecutor device (0): <undefined>, <undefined>
+Dictionaries loaded.
+Loaded subtoken vocab. size: 3
+Loaded target word vocab. size: 9
+Loaded nodes vocab. size: 137
+Created model
+Starting training
+
+WARNING: The TensorFlow contrib module will not be included in TensorFlow 2.0.
+For more information, please see:
+  * https://github.com/tensorflow/community/blob/master/rfcs/20180907-contrib-sunset.md
+  * https://github.com/tensorflow/addons
+If you depend on functionality not listed there, please file an issue.
+
+WARNING:tensorflow:From /home/redaigbaria/sec_proj/code2seq/reader.py:101: to_int64 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+WARNING:tensorflow:From /home/redaigbaria/sec_proj/code2seq/reader.py:161: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+WARNING:tensorflow:From /home/redaigbaria/miniconda3/envs/cs236781-hw/lib/python3.7/site-packages/tensorflow/python/data/ops/dataset_ops.py:1419: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+WARNING:tensorflow:From /home/redaigbaria/sec_proj/code2seq/model.py:498: LSTMCell.__init__ (from tensorflow.python.ops.rnn_cell_impl) is deprecated and will be removed in a future version.
+Instructions for updating:
+This class is equivalent as tf.keras.layers.LSTMCell, and will be replaced by that in Tensorflow 2.0.
+WARNING:tensorflow:From /home/redaigbaria/sec_proj/code2seq/model.py:505: dynamic_rnn (from tensorflow.python.ops.rnn) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `keras.layers.RNN(cell)`, which is equivalent to this API
+WARNING:tensorflow:From /home/redaigbaria/miniconda3/envs/cs236781-hw/lib/python3.7/site-packages/tensorflow/python/ops/rnn.py:626: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+WARNING:tensorflow:From /home/redaigbaria/miniconda3/envs/cs236781-hw/lib/python3.7/site-packages/tensorflow/python/ops/rnn_cell_impl.py:1259: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+WARNING:tensorflow:From /home/redaigbaria/sec_proj/code2seq/model.py:542: dense (from tensorflow.python.layers.core) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.dense instead.
+WARNING:tensorflow:From /home/redaigbaria/sec_proj/code2seq/model.py:409: MultiRNNCell.__init__ (from tensorflow.python.ops.rnn_cell_impl) is deprecated and will be removed in a future version.
+Instructions for updating:
+This class is equivalent as tf.keras.layers.StackedRNNCells, and will be replaced by that in Tensorflow 2.0.
+Training batch size:			 32
+Dataset path:				 data/assembly/assembly
+Training file path:			 data/assembly/assembly.train.c2s
+Validation path:			 data/assembly/assembly.val.c2s
+Taking max contexts from each example:	 10
+Random path sampling:			 False
+Embedding size:				 128
+Uni-directional LSTM of size:		 256
+Decoder size:				 320
+Decoder layers:				 1
+Max path lengths:			 4350
+Max subtokens in a token:		 1
+Max target length:			 1
+Embeddings dropout keep_prob:		 0.75
+LSTM dropout keep_prob:			 0.5
+============================================
+Number of trainable params: 1871552
+Initalized variables
+Started reader...
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m48s
+Accuracy after 1 epochs: 0.00000
+After 1 epochs: Precision: 0.00000, recall: 0.00000, F1: 0.00000
+Rouge:  -1
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 2 epochs: 0.30000
+After 2 epochs: Precision: 0.69231, recall: 0.30000, F1: 0.41860
+Rouge:  {'rouge-1': {'f': 0.6923076888461537, 'p': 0.6923076923076923, 'r': 0.6923076923076923}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.692307692307346, 'p': 0.6923076923076923, 'r': 0.6923076923076923}}
+Saved after 2 epochs in: models/assembly/model_iter2
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 3 epochs: 0.33333
+After 3 epochs: Precision: 0.33333, recall: 0.33333, F1: 0.33333
+Rouge:  {'rouge-1': {'f': 0.33333333166666657, 'p': 0.3333333333333333, 'r': 0.3333333333333333}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.3333333333331666, 'p': 0.3333333333333333, 'r': 0.3333333333333333}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 4 epochs: 0.63333
+After 4 epochs: Precision: 0.63333, recall: 0.63333, F1: 0.63333
+Rouge:  {'rouge-1': {'f': 0.6333333301666665, 'p': 0.6333333333333333, 'r': 0.6333333333333333}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.6333333333330163, 'p': 0.6333333333333333, 'r': 0.6333333333333333}}
+Saved after 4 epochs in: models/assembly/model_iter4
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 5 epochs: 0.63333
+After 5 epochs: Precision: 0.63333, recall: 0.63333, F1: 0.63333
+Rouge:  {'rouge-1': {'f': 0.6333333301666665, 'p': 0.6333333333333333, 'r': 0.6333333333333333}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.6333333333330163, 'p': 0.6333333333333333, 'r': 0.6333333333333333}}
+Average loss at batch 100: 2.047181, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 6 epochs: 0.63333
+After 6 epochs: Precision: 0.63333, recall: 0.63333, F1: 0.63333
+Rouge:  {'rouge-1': {'f': 0.6333333301666665, 'p': 0.6333333333333333, 'r': 0.6333333333333333}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.6333333333330163, 'p': 0.6333333333333333, 'r': 0.6333333333333333}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 7 epochs: 0.63333
+After 7 epochs: Precision: 0.63333, recall: 0.63333, F1: 0.63333
+Rouge:  {'rouge-1': {'f': 0.6333333301666665, 'p': 0.6333333333333333, 'r': 0.6333333333333333}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.6333333333330163, 'p': 0.6333333333333333, 'r': 0.6333333333333333}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 8 epochs: 0.86667
+After 8 epochs: Precision: 0.86667, recall: 0.86667, F1: 0.86667
+Rouge:  {'rouge-1': {'f': 0.8666666623333331, 'p': 0.8666666666666667, 'r': 0.8666666666666667}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.8666666666662327, 'p': 0.8666666666666667, 'r': 0.8666666666666667}}
+Saved after 8 epochs in: models/assembly/model_iter8
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 9 epochs: 0.93333
+After 9 epochs: Precision: 0.93333, recall: 0.93333, F1: 0.93333
+Rouge:  {'rouge-1': {'f': 0.9333333286666664, 'p': 0.9333333333333333, 'r': 0.9333333333333333}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.933333333332866, 'p': 0.9333333333333333, 'r': 0.9333333333333333}}
+Saved after 9 epochs in: models/assembly/model_iter9
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 10 epochs: 0.93333
+After 10 epochs: Precision: 0.93333, recall: 0.93333, F1: 0.93333
+Rouge:  {'rouge-1': {'f': 0.9333333286666664, 'p': 0.9333333333333333, 'r': 0.9333333333333333}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.933333333332866, 'p': 0.9333333333333333, 'r': 0.9333333333333333}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 11 epochs: 0.96667
+After 11 epochs: Precision: 0.96667, recall: 0.96667, F1: 0.96667
+Rouge:  {'rouge-1': {'f': 0.966666661833333, 'p': 0.9666666666666667, 'r': 0.9666666666666667}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9666666666661826, 'p': 0.9666666666666667, 'r': 0.9666666666666667}}
+Saved after 11 epochs in: models/assembly/model_iter11
+Average loss at batch 200: 0.591554, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 12 epochs: 1.00000
+After 12 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Saved after 12 epochs in: models/assembly/model_iter12
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 13 epochs: 1.00000
+After 13 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 14 epochs: 1.00000
+After 14 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 15 epochs: 1.00000
+After 15 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 16 epochs: 1.00000
+After 16 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 300: 0.035722, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m24s
+Accuracy after 17 epochs: 1.00000
+After 17 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 18 epochs: 1.00000
+After 18 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 19 epochs: 1.00000
+After 19 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 20 epochs: 1.00000
+After 20 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 21 epochs: 1.00000
+After 21 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 22 epochs: 1.00000
+After 22 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 400: 0.006456, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 23 epochs: 1.00000
+After 23 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 24 epochs: 1.00000
+After 24 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m24s
+Accuracy after 25 epochs: 1.00000
+After 25 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 26 epochs: 1.00000
+After 26 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 27 epochs: 1.00000
+After 27 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 500: 0.003931, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 28 epochs: 1.00000
+After 28 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 29 epochs: 1.00000
+After 29 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 30 epochs: 1.00000
+After 30 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 31 epochs: 1.00000
+After 31 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 32 epochs: 1.00000
+After 32 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 33 epochs: 1.00000
+After 33 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 600: 0.002990, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 34 epochs: 1.00000
+After 34 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 35 epochs: 1.00000
+After 35 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 36 epochs: 1.00000
+After 36 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 37 epochs: 1.00000
+After 37 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 38 epochs: 1.00000
+After 38 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 700: 0.002533, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 39 epochs: 1.00000
+After 39 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 40 epochs: 1.00000
+After 40 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 41 epochs: 1.00000
+After 41 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 42 epochs: 1.00000
+After 42 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 43 epochs: 1.00000
+After 43 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m25s
+Accuracy after 44 epochs: 1.00000
+After 44 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 800: 0.002242, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 45 epochs: 1.00000
+After 45 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 46 epochs: 1.00000
+After 46 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 47 epochs: 1.00000
+After 47 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 48 epochs: 1.00000
+After 48 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 49 epochs: 1.00000
+After 49 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m22s
+Accuracy after 50 epochs: 1.00000
+After 50 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 51 epochs: 1.00000
+After 51 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 52 epochs: 1.00000
+After 52 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 53 epochs: 1.00000
+After 53 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 54 epochs: 1.00000
+After 54 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 55 epochs: 1.00000
+After 55 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 1000: 0.003938, 	throughput: 1 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 56 epochs: 1.00000
+After 56 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 57 epochs: 1.00000
+After 57 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 58 epochs: 1.00000
+After 58 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 59 epochs: 1.00000
+After 59 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 60 epochs: 1.00000
+After 60 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 61 epochs: 1.00000
+After 61 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 1100: 0.001883, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 62 epochs: 1.00000
+After 62 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 63 epochs: 1.00000
+After 63 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m24s
+Accuracy after 64 epochs: 1.00000
+After 64 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 65 epochs: 1.00000
+After 65 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 66 epochs: 1.00000
+After 66 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 1200: 0.001814, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 67 epochs: 1.00000
+After 67 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 68 epochs: 1.00000
+After 68 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 69 epochs: 1.00000
+After 69 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m22s
+Accuracy after 70 epochs: 1.00000
+After 70 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 71 epochs: 1.00000
+After 71 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 72 epochs: 1.00000
+After 72 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 1300: 0.001858, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 73 epochs: 1.00000
+After 73 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 74 epochs: 1.00000
+After 74 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 75 epochs: 1.00000
+After 75 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 76 epochs: 1.00000
+After 76 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 77 epochs: 1.00000
+After 77 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 1400: 0.001599, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 78 epochs: 1.00000
+After 78 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m28s
+Accuracy after 79 epochs: 1.00000
+After 79 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 80 epochs: 1.00000
+After 80 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 81 epochs: 1.00000
+After 81 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 82 epochs: 1.00000
+After 82 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 83 epochs: 1.00000
+After 83 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 1500: 0.001629, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 84 epochs: 1.00000
+After 84 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 85 epochs: 1.00000
+After 85 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 86 epochs: 1.00000
+After 86 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 87 epochs: 1.00000
+After 87 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 88 epochs: 1.00000
+After 88 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 1600: 0.001721, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 89 epochs: 1.00000
+After 89 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 90 epochs: 1.00000
+After 90 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 91 epochs: 1.00000
+After 91 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 92 epochs: 1.00000
+After 92 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 93 epochs: 1.00000
+After 93 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 94 epochs: 1.00000
+After 94 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 1700: 0.001830, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 95 epochs: 1.00000
+After 95 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 96 epochs: 1.00000
+After 96 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 97 epochs: 1.00000
+After 97 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 98 epochs: 1.00000
+After 98 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 99 epochs: 1.00000
+After 99 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 100 epochs: 1.00000
+After 100 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 101 epochs: 1.00000
+After 101 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 102 epochs: 1.00000
+After 102 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 103 epochs: 1.00000
+After 103 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 104 epochs: 1.00000
+After 104 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 105 epochs: 1.00000
+After 105 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 1900: 0.003509, 	throughput: 1 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 106 epochs: 1.00000
+After 106 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 107 epochs: 1.00000
+After 107 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m23s
+Accuracy after 108 epochs: 1.00000
+After 108 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 109 epochs: 1.00000
+After 109 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 110 epochs: 1.00000
+After 110 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m27s
+Accuracy after 111 epochs: 1.00000
+After 111 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Average loss at batch 2000: 0.001638, 	throughput: 3 samples/sec
+Finished 1 epochs
+Done testing, epoch reached
+Evaluation time: 0h0m26s
+Accuracy after 112 epochs: 1.00000
+After 112 epochs: Precision: 1.00000, recall: 1.00000, F1: 1.00000
+Rouge:  {'rouge-1': {'f': 0.9999999949999997, 'p': 1.0, 'r': 1.0}, 'rouge-2': {'f': 0.0, 'p': 0.0, 'r': 0.0}, 'rouge-l': {'f': 0.9999999999994993, 'p': 1.0, 'r': 1.0}}
+Not improved for 100 epochs, stopping training
+Best scores - epoch 12: 
+Precision: 1.00000, recall: 1.00000, F1: 1.00000

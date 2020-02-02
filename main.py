@@ -155,10 +155,10 @@ def train_input():
             relified_consts = relify(processed_consts)
             output.write(f"{test_func.name} DUM,{processsed_code}|CONS|{relified_consts},DUM\n")
     output.close()
-    # shutil.copy2(output_name, f"code2seq/{dataset_name}.train.raw.txt")
-    # shutil.copy2(output_name, f"code2seq/{dataset_name}.val.raw.txt")
-    # shutil.copy2(output_name, f"code2seq/{dataset_name}.test.raw.txt")
-    # os.remove(output_name)
+    shutil.copy2(output_name, f"code2seq/{dataset_name}.train.raw.txt")
+    shutil.copy2(output_name, f"code2seq/{dataset_name}.val.raw.txt")
+    shutil.copy2(output_name, f"code2seq/{dataset_name}.test.raw.txt")
+    os.remove(output_name)
 
 
 if __name__ == "__main__":
