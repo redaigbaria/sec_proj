@@ -109,3 +109,8 @@ dumps
 
 poster.docx
 generated_input.txt
+*.pkl
+jsons/
+datasets/
+slurm-*.out
+

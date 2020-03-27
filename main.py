@@ -8,6 +8,7 @@ import shutil
 import time
 import logging
 import json
+import argparse
 
 
 bases_dict = dict()
@@ -66,25 +67,8 @@ def address_breakfun(state):
                 return
             replacement_dict[state.inspect.address_concretization_result[0]] = f"{bases_dict[base]}({offset})"
 
-def is_qualified(symbol):
-    avoid = {'main', 'usage', 'exit'}
-    return symbol.is_function and symbol.is_export and not (symbol.name.startswith("_") or symbol.name in avoid)
 
-
-def get_functions(proj):
-    funcs = []
-    for symb in proj.loader.main_object.symbols:
-        if is_qualified(symb):
-            funcs.append(symb)
-    return funcs
-
-
-def get_cfg_functions(proj):
-    funcs = []
-    for f in proj.kb.functions.values():
-
-
-def time_limit_check():
+def time_limit_check(smgr):
     global start_time
     minutes_limit = 1
     should_stop = time.time() - start_time > (60 * minutes_limit)
@@ -95,7 +79,7 @@ def time_limit_check():
 
 def analyze_func(proj, fun, cfg):
     print(f"started running {fun.name}")
-    call_state = proj.factory.call_state(fun.rebased_addr, add_options={
+    call_state = proj.factory.call_state(fun.addr, add_options={
         'CALLLESS': True, 'NO_SYMBOLIC_SYSCALL_RESOLUTION': True
     })
     call_state.inspect.b('address_concretization', when=angr.BP_AFTER, action=address_breakfun)
@@ -105,24 +89,13 @@ def analyze_func(proj, fun, cfg):
     start_time = time.time()
     sm.run(until=time_limit_check)
     print(f"finished {fun.name}")
-    return sm.deadended
+    return sm
 
 
-def save_functions_names():
-    core_path = "coreutils_bins"
-    for proj_name in os.listdir(core_path):
-        if os.path.exists(f"dumps/{proj_name}_functions.pkl"):
-            continue
-        print(f"analysing proj: {proj_name}")
-        proj_path = os.path.join(core_path, proj_name)
-        try:
-            proj = angr.Project(proj_path, auto_load_libs=False)
-        except Exception as e:
-            logging.error(f"{proj_name} loading failed")
-            print(e)
-            continue
-        funcs = get_functions(proj)
-        pickle.dump(funcs, open(f"dumps/{proj_name}_functions.pkl", "wb"))
+def get_cfg_funcs(proj, binary, excluded):
+    return list(filter(None, [f if f.binary_name == binary and (not f.is_plt) and not f.name.startswith(
+        "sub_") and not f.name.startswith("_") and f.name not in excluded and f.symbol.is_export else None for f in
+                              proj.kb.functions.values()]))
 
 
 def block_to_ins(block: angr.block.Block):
@@ -161,52 +134,117 @@ def tokenize_function_name(function_name):
 
 
 def generate_dataset(train_binaries, dataset_name):
-    output_name = f"datasets/{dataset_name}.txt"
-    output = open(output_name, "w")
+    dataset_dir = f"datasets/{dataset_name}"
+    os.makedirs(dataset_dir, exist_ok=True)
     analysed_funcs = set()
     for binary in train_binaries:
-        proj = angr.Project(binary, auto_load_libs=False)
-        cfg = proj.analyses.CFGFast()
-        # funcs = get_functions(proj)
+        analyse_binary(analysed_funcs, binary, dataset_dir)
 
-        for test_func in proj.kb.functions.values():
-            if test_func.name in analysed_funcs:
-                print(f"skipping {test_func.name}")
-                continue
-            print(f"analyzing {binary}/{test_func.name}")
-            bases_dict.clear()
-            replacement_dict.clear()
-            try:
-                exec_paths = analyze_func(proj, test_func, cfg)
-                if len(exec_paths) == 0:
-                    continue
+
+def analyse_binary(analysed_funcs, binary_name, dataset_dir):
+    excluded = {'main', 'usage', 'exit'}
+    proj = angr.Project(binary_name, auto_load_libs=False)
+    cfg = proj.analyses.CFGFast()
+    # cfg = proj.analyses.CFGEmulated()
+    binary_name = os.path.basename(binary_name)
+    binary_dir = os.path.join(dataset_dir, f"{binary_name}")
+    os.makedirs(binary_dir, exist_ok=True)
+    funcs = get_cfg_funcs(proj, binary_name, excluded)
+    output = open(f"{binary_dir}/output.txt", "w")
+    print(f"{binary_name} have {len(funcs)} funcs")
+    for test_func in funcs:
+        if test_func.name in analysed_funcs:
+            print(f"skipping {test_func.name}")
+            continue
+        print(f"analyzing {binary_name}/{test_func.name}")
+        bases_dict.clear()
+        replacement_dict.clear()
+        analysed_funcs.add(test_func.name)
+        try:
+            sm: angr.sim_manager.SimulationManager = analyze_func(proj, test_func, cfg)
+            sm_file = open(os.path.join(binary_dir, f"{test_func.name}.pkl"), "wb")
+            pickle.dump(sm, sm_file)
+            sm_file.close()
+            exec_paths = sm.deadended
+            if len(exec_paths) == 0:
+                processsed_code = "|".join(list(filter(None, map(block_to_ins, test_func.blocks))))
+                output.write(
+                    f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|NONE,DUM\n")
+            else:
                 for exec_path in exec_paths:
                     blocks = [proj.factory.block(baddr) for baddr in exec_path.history.bbl_addrs]
                     processsed_code = "|".join(list(filter(None, map(block_to_ins, blocks))))
                     processed_consts = "|".join(list(filter(None, map(cons_to_triple, exec_path.solver.constraints))))
                     relified_consts = relify(processed_consts)
-                    output.write(f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|{relified_consts},DUM\n")
-            except Exception as e:
-                logging.error(str(e))
-                logging.error(f"got an error while analyzing {test_func.name}")
-            analysed_funcs.add(test_func.name)
+                    output.write(
+                        f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|{relified_consts},DUM\n")
+        except Exception as e:
+            logging.error(str(e))
+            logging.error(f"got an error while analyzing {test_func.name}")
     output.close()
-    # shutil.copy2(output_name, f"code2seq/{dataset_name}.train.raw.txt")
-    # shutil.copy2(output_name, f"code2seq/{dataset_name}.val.raw.txt")
-    # shutil.copy2(output_name, f"code2seq/{dataset_name}.test.raw.txt")
-    # os.remove(output_name)
 
 
+def get_functions_histogram():
+    """
+        in order to exclude coreutils-library functions from analysis
+    """
+    binaries = os.listdir("coreutils_bins")
+    binaries.sort()
+    binaries = [f"coreutils_bins/{binary}" for binary in binaries][50:70]
+    hist = dict()
+    for binary in binaries:
+        proj = angr.Project(binary, auto_load_libs=False)
+        proj.analyses.CFGFast()
+        binary = os.path.basename(binary)
+        funcs = get_cfg_funcs(proj, binary, {'main', 'usage', 'exit'})
+        for func in funcs:
+            hist[func.name] = hist.get(func.name, 0) + 1
+
+    json.dump(hist, open("functions_histogram.json", "w"))
+    b = list(hist.items())
+    b.sort(key=lambda x: x[1], reverse=True)
+    print(b)
+
+    #
+    # def canonicalize(self, var_map=None, counter=None):
+    #     counter = itertools.count() if counter is None else counter
+    #     var_map = { } if var_map is None else var_map
+    #
+    #     for v in self.leaf_asts():
+    #         if v.cache_key not in var_map and v.op in { 'BVS', 'BoolS', 'FPS' }:
+    #             new_name = 'canonical_%d' % next(counter)
+    #             var_map[v.cache_key] = v._rename(new_name)
+    #
+    #     return var_map, counter, self.replace_dict(var_map)
+    #
+    # #
+
+def get_analysed_funcs(dataset_path):
+    binaries = os.scandir(dataset_path)
+    analysed_funcs = set()
+    from glob import glob
+    for entry in binaries:
+        funcs = glob(f"{entry.path}/*.pkl")
+        analysed_funcs.union(set(map(lambda x: x[:-4], map(os.path.basename, funcs))))
+    print(analysed_funcs)
+    print(len(analysed_funcs))
 
 
 if __name__ == "__main__":
+    # get_functions_histogram()
     # note: some functions are shared among most of the binaries,
     # should consider removing them from the learning scheme, or adding them just once in the dataset
+
+    get_analysed_funcs("datasets/cfg_overfitting_test")
+    exit()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--process_num", type=int, default=1)
+    args = parser.parse_args()
+
     binaries = os.listdir("coreutils_bins")
     binaries.sort()
     binaries = [f"coreutils_bins/{binary}" for binary in binaries]
-    # mv
-    generate_dataset(binaries[51:52], "new_test")
+    generate_dataset(binaries[50 + 5 * args.process_num:55 + 5 * args.process_num], "new_dataset")
     exit()
     # A test to detremine wether to use CFGFast or EmulatedCFG for finding functions in the binary... it turns out
     # should use CFGFast, but remove all undefined symbols that it adds (starts with sub_xxx)
@@ -228,20 +266,20 @@ if __name__ == "__main__":
     # exit()
     # generate_dataset(binaries[0:20], dataset_name="overfitting_test")
     # exit()
-    hist = dict()
-    p = "dumps"
-    for name in os.listdir(p):
-        funcs = pickle.load(open(f"dumps/{name}", "rb"))
-        for f in funcs:
-            hist[f.name] = hist.get(f.name, 0) + 1
-    b = list(hist.items())
-    b.sort(key=lambda x: x[1], reverse=True)
-    print(b)
-    c = 0
-    for k, v in b:
-        c += v
-
-    print(c)
+    # hist = dict()
+    # p = "dumps"
+    # for name in os.listdir(p):
+    #     funcs = pickle.load(open(f"dumps/{name}", "rb"))
+    #     for f in funcs:
+    #         hist[f.name] = hist.get(f.name, 0) + 1
+    # b = list(hist.items())
+    # b.sort(key=lambda x: x[1], reverse=True)
+    # print(b)
+    # c = 0
+    # for k, v in b:
+    #     c += v
+    #
+    # print(c)
     # move binaries
     #  ls -al  | grep ^-rwxr | awk '{print $(NF)}' | while read line;do cp $line ~/sec_proj/coreutils_bins;done
     # 
