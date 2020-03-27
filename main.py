@@ -9,6 +9,7 @@ import time
 import logging
 import json
 import argparse
+import itertools
 
 
 bases_dict = dict()
@@ -129,6 +130,47 @@ def relify(constraints):
     return constraints.replace('{UNINITIALIZED}', '')
 
 
+def remove_consecutive_pipes(s1):
+    return re.sub("(\|)+", "|", s1)
+
+
+def con_to_str(con, replace_strs=[', ', ' ', '(', ')'], max_depth=8):
+    repr = con.shallow_repr(max_depth=max_depth, details=con.MID_REPR).replace('{UNINITIALIZED}', '')
+    for r_str in replace_strs:
+        repr = repr.replace(r_str, '|')
+    
+    return remove_consecutive_pipes(repr) + "\t"
+
+
+def gen_new_name(old_name, counters):
+    if re.match(r"mem", old_name):
+        return 'mem_%d' % next(counters['mem'])
+    if re.match(r"fake_ret_value", old_name):
+        return 'ret_%d' % next(counters['ret'])
+    if re.match(r"reg", old_name):
+        return re.sub("(_[0-9]+)+", '', old_name)
+    if re.match(r"unconstrained_ret", old_name):
+        return re.sub("(_[0-9]+)+", '', old_name[len("unconstrained_ret_") : ])
+    return old_name
+
+
+def varify_cons(cons , var_map=None, counters=None, max_depth=8):
+    counters = {'mem': itertools.count(), 'ret': itertools.count()} if counters is None else counters
+    var_map = {} if var_map is None else var_map
+    new_cons = []
+
+    for con in cons:
+        if con.concrete:
+            continue
+        for v in con.leaf_asts():
+            if v.cache_key not in var_map and v.op in { 'BVS', 'BoolS', 'FPS' }:
+                new_name = gen_new_name(v.args[0], counters=counters)
+                var_map[v.cache_key] = v._rename(new_name)
+        new_cons.append(con_to_str(con.replace_dict(var_map), max_depth=max_depth))
+
+    return var_map, new_cons
+
+
 def tokenize_function_name(function_name):
     return "|".join(function_name.split("_"))
 
@@ -171,11 +213,15 @@ def analyse_binary(analysed_funcs, binary_name, dataset_dir):
                 output.write(
                     f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|NONE,DUM\n")
             else:
+                counters = {'mem': itertools.count(), 'ret': itertools.count()}
+                var_map = {} 
                 for exec_path in exec_paths:
                     blocks = [proj.factory.block(baddr) for baddr in exec_path.history.bbl_addrs]
                     processsed_code = "|".join(list(filter(None, map(block_to_ins, blocks))))
-                    processed_consts = "|".join(list(filter(None, map(cons_to_triple, exec_path.solver.constraints))))
-                    relified_consts = relify(processed_consts)
+                    var_map, relified_consts = varify_cons(exec_path.solver.constraints, var_map=var_map, counters=counters)
+                    relified_consts = "|".join(relified_consts)
+                    #processed_consts = "|".join(list(filter(None, map(cons_to_triple, exec_path.solver.constraints))))
+                    #relified_consts = relify(processed_consts)
                     output.write(
                         f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|{relified_consts},DUM\n")
         except Exception as e:
