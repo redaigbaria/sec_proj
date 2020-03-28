@@ -22,17 +22,21 @@
 #   step and set this value to the number of cores.
 # PYTHON - python3 interpreter alias.
 
-DATASET_NAME=assembly
-MAX_DATA_CONTEXTS=10000
-MAX_CONTEXTS=10000
-SUBTOKEN_VOCAB_SIZE=186277
-TARGET_VOCAB_SIZE=26347
-PYTHON=python
+DATASET_NAME=overfitting_test
+MAX_DATA_CONTEXTS=1
+MAX_CONTEXTS=1
+SUBTOKEN_VOCAB_SIZE=1
+TARGET_VOCAB_SIZE=452
+PYTHON=python3
 ###########################################################
 
-TRAIN_DATA_FILE=${DATASET_NAME}.train.raw.txt
-VAL_DATA_FILE=${DATASET_NAME}.val.raw.txt
-TEST_DATA_FILE=${DATASET_NAME}.test.raw.txt
+#TRAIN_DATA_FILE=${DATASET_NAME}.train.raw.txt
+#VAL_DATA_FILE=${DATASET_NAME}.val.raw.txt
+#TEST_DATA_FILE=${DATASET_NAME}.test.raw.txt
+
+TRAIN_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/collective_output.txt
+VAL_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/val.txt
+TEST_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/val.txt
 
 mkdir -p data
 mkdir -p data/${DATASET_NAME}

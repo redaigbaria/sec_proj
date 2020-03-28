@@ -10,14 +10,14 @@ import logging
 import json
 import argparse
 import itertools
-
+from glob import glob
 
 bases_dict = dict()
 replacement_dict = dict()
-
 start_time = 0
 
 def address_breakfun(state):
+    exit(1)
     # if not state.inspect.address_concretization_add_constraints:
     #     return
     if state.inspect.address_concretization_result is None:
@@ -83,7 +83,7 @@ def analyze_func(proj, fun, cfg):
     call_state = proj.factory.call_state(fun.addr, add_options={
         'CALLLESS': True, 'NO_SYMBOLIC_SYSCALL_RESOLUTION': True
     })
-    call_state.inspect.b('address_concretization', when=angr.BP_AFTER, action=address_breakfun)
+    # call_state.inspect.b('address_concretization', when=angr.BP_AFTER, action=address_breakfun)
     sm = proj.factory.simulation_manager(call_state)
     sm.use_technique(angr.exploration_techniques.LoopSeer(cfg=cfg, bound=2))
     global start_time
@@ -106,7 +106,7 @@ def block_to_ins(block: angr.block.Block):
         operands = op_str.strip(" ").split(",")
         operands = [i.strip().replace("[","").replace("]", "") for i in operands if i != ""]
         parsed_ins = [ins.mnemonic] + list(filter(None, operands))
-        result.append("|".join(parsed_ins).replace(" ", "|") + "\t")
+        result.append("|".join(parsed_ins).replace(" ", "|") + "|\t")
         # result.append(f"{ins.mnemonic}|{operands[0]}|{operands[1]}".replace(" ", "|"))
     return "|".join(result)
 
@@ -138,7 +138,7 @@ def con_to_str(con, replace_strs=[', ', ' ', '(', ')'], max_depth=8):
     repr = con.shallow_repr(max_depth=max_depth, details=con.MID_REPR).replace('{UNINITIALIZED}', '')
     for r_str in replace_strs:
         repr = repr.replace(r_str, '|')
-    
+
     return remove_consecutive_pipes(repr) + "\t"
 
 
@@ -178,13 +178,13 @@ def tokenize_function_name(function_name):
 def generate_dataset(train_binaries, dataset_name):
     dataset_dir = f"datasets/{dataset_name}"
     os.makedirs(dataset_dir, exist_ok=True)
-    analysed_funcs = set()
+    analysed_funcs = get_analysed_funcs(dataset_dir)
     for binary in train_binaries:
-        analyse_binary(analysed_funcs, binary, dataset_dir)
+        analysed_funcs = analyse_binary(analysed_funcs, binary, dataset_dir)
 
 
 def analyse_binary(analysed_funcs, binary_name, dataset_dir):
-    excluded = {'main', 'usage', 'exit'}
+    excluded = {'main', 'usage', 'exit'}.union(analysed_funcs)
     proj = angr.Project(binary_name, auto_load_libs=False)
     cfg = proj.analyses.CFGFast()
     # cfg = proj.analyses.CFGEmulated()
@@ -192,42 +192,43 @@ def analyse_binary(analysed_funcs, binary_name, dataset_dir):
     binary_dir = os.path.join(dataset_dir, f"{binary_name}")
     os.makedirs(binary_dir, exist_ok=True)
     funcs = get_cfg_funcs(proj, binary_name, excluded)
-    output = open(f"{binary_dir}/output.txt", "w")
+    output = open(f"{binary_dir}/output.txt", "a")
     print(f"{binary_name} have {len(funcs)} funcs")
     for test_func in funcs:
         if test_func.name in analysed_funcs:
             print(f"skipping {test_func.name}")
             continue
         print(f"analyzing {binary_name}/{test_func.name}")
-        bases_dict.clear()
-        replacement_dict.clear()
+        # bases_dict.clear()
+        # replacement_dict.clear()
         analysed_funcs.add(test_func.name)
         try:
             sm: angr.sim_manager.SimulationManager = analyze_func(proj, test_func, cfg)
             sm_file = open(os.path.join(binary_dir, f"{test_func.name}.pkl"), "wb")
             pickle.dump(sm, sm_file)
             sm_file.close()
-            exec_paths = sm.deadended
-            if len(exec_paths) == 0:
-                processsed_code = "|".join(list(filter(None, map(block_to_ins, test_func.blocks))))
-                output.write(
-                    f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|NONE,DUM\n")
-            else:
-                counters = {'mem': itertools.count(), 'ret': itertools.count()}
-                var_map = {} 
-                for exec_path in exec_paths:
-                    blocks = [proj.factory.block(baddr) for baddr in exec_path.history.bbl_addrs]
-                    processsed_code = "|".join(list(filter(None, map(block_to_ins, blocks))))
-                    var_map, relified_consts = varify_cons(exec_path.solver.constraints, var_map=var_map, counters=counters)
-                    relified_consts = "|".join(relified_consts)
-                    #processed_consts = "|".join(list(filter(None, map(cons_to_triple, exec_path.solver.constraints))))
-                    #relified_consts = relify(processed_consts)
-                    output.write(
-                        f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|{relified_consts},DUM\n")
+            # exec_paths = sm.deadended
+            # if len(exec_paths) == 0:
+            #     processsed_code = "|".join(list(filter(None, map(block_to_ins, test_func.blocks))))
+            #     output.write(
+            #         f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|NONE,DUM\n")
+            # else:
+            #     counters = {'mem': itertools.count(), 'ret': itertools.count()}
+            #     var_map = {}
+            #     for exec_path in exec_paths:
+            #         blocks = [proj.factory.block(baddr) for baddr in exec_path.history.bbl_addrs]
+            #         processsed_code = "|".join(list(filter(None, map(block_to_ins, blocks))))
+            #         var_map, relified_consts = varify_cons(exec_path.solver.constraints, var_map=var_map, counters=counters)
+            #         relified_consts = "|".join(relified_consts)
+            #         #processed_consts = "|".join(list(filter(None, map(cons_to_triple, exec_path.solver.constraints))))
+            #         #relified_consts = relify(processed_consts)
+            #         output.write(
+            #             f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|{relified_consts},DUM\n")
         except Exception as e:
             logging.error(str(e))
             logging.error(f"got an error while analyzing {test_func.name}")
     output.close()
+    return analysed_funcs
 
 
 def get_functions_histogram():
@@ -265,33 +266,133 @@ def get_functions_histogram():
     #
     # #
 
+
+def remove_failed_pkls(dataset_path):
+    binaries = os.scandir(dataset_path)
+    failed_funcs = []
+    for entry in binaries:
+        funcs = glob(f"{entry.path}/*.pkl")
+        for func in funcs:
+            with open(func, "rb") as f:
+                try:
+                    sm = pickle.load(f)
+                    print(f"{func} have {sm}")
+                except:
+                    print(f"{func} failed")
+                    failed_funcs.append(func)
+
+    # for failed_func in failed_funcs:
+    #     os.remove(failed_func)
+    print(set(failed_funcs))
+
+
 def get_analysed_funcs(dataset_path):
     binaries = os.scandir(dataset_path)
     analysed_funcs = set()
-    from glob import glob
     for entry in binaries:
         funcs = glob(f"{entry.path}/*.pkl")
-        analysed_funcs.union(set(map(lambda x: x[:-4], map(os.path.basename, funcs))))
-    print(analysed_funcs)
-    print(len(analysed_funcs))
+        analysed_funcs.update(map(lambda x: x[:-len(".pkl")], map(os.path.basename, funcs)))
+
+    return analysed_funcs
 
 
-if __name__ == "__main__":
-    # get_functions_histogram()
-    # note: some functions are shared among most of the binaries,
-    # should consider removing them from the learning scheme, or adding them just once in the dataset
+def sm_to_output(sm: angr.sim_manager.SimulationManager, output_file, func_name):
+    counters = {'mem': itertools.count(), 'ret': itertools.count()}
+    var_map = {}
+    skipped_lines = 0
+    proj = sm._project
+    for exec_paths in sm.stashes.values():
+        for exec_path in exec_paths:
+            blocks = [proj.factory.block(baddr) for baddr in exec_path.history.bbl_addrs]
+            processsed_code = "|".join(list(filter(None, map(block_to_ins, blocks))))
+            var_map, relified_consts = varify_cons(exec_path.solver.constraints, var_map=var_map, counters=counters)
+            relified_consts = "|".join(relified_consts)
+            line = f"{tokenize_function_name(func_name)} DUM,{processsed_code}|CONS|{relified_consts},DUM\n"
+            if len(line) <= 3000:
+                output_file.write(line)
+            else:
+                skipped_lines += 1
+    print(f"skipped {skipped_lines} lines")
 
-    get_analysed_funcs("datasets/cfg_overfitting_test")
-    exit()
+
+def generate_output(dataset_path):
+    binaries = list(os.scandir(dataset_path))
+    import numpy as np
+    np.random.seed(42)
+    np.random.shuffle(binaries)
+    train_output = open(os.path.join(dataset_path, "train_output.txt"), "w")
+    test_output = open(os.path.join(dataset_path, "test_output.txt"), "w")
+    val_output = open(os.path.join(dataset_path, "val_output.txt"), "w")
+    analysed_funcs = set()
+    output = train_output
+    for i, entry in enumerate(binaries):
+        if i == 50:
+            output = val_output
+        if i == 60:
+            output = test_output
+        funcs = glob(f"{entry.path}/*.pkl")
+        for func in funcs:
+            if os.path.basename(func) in analysed_funcs:
+                continue
+            with open(func, "rb") as f:
+                try:
+                    func_name = os.path.basename(func)
+                    func_name = func_name[:-len(".pkl")]
+                    analysed_funcs.add(os.path.basename(func))
+                    sm = pickle.load(f)
+                    sm_to_output(sm, output, func_name)
+                except Exception as e:
+                    print(e)
+                    print(f"{func} failed")
+                    # failed_funcs.append(func)
+    train_output.close()
+    test_output.close()
+    val_output.close()
+
+
+def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--process_num", type=int, default=1)
+    parser.add_argument("--binary_idx", type=int, required=True)
     args = parser.parse_args()
-
     binaries = os.listdir("coreutils_bins")
     binaries.sort()
     binaries = [f"coreutils_bins/{binary}" for binary in binaries]
-    generate_dataset(binaries[50 + 5 * args.process_num:55 + 5 * args.process_num], "new_dataset")
+    generate_dataset([binaries[args.binary_idx]], "cfg_overfitting_test")
+    print("successfully exited")
+
+
+def trim_long_lines(file_path):
+    file = open(file_path, "r")
+    output_path = os.path.join(os.path.dirname(file_path), f"trimmed_{os.path.basename(file_path)}")
+    output_file = open(output_path, "w")
+    max_100_lengths = [0] * 100
+    counter = 0
+    lengths = []
+
+    for line in file:
+        curr_min = min(max_100_lengths)
+        lengths.append(len(line))
+        if len(line) > 2500:
+            counter += 1
+        else:
+            output_file.write(line)
+        if len(line) > curr_min:
+            max_100_lengths[max_100_lengths.index(curr_min)] = len(line)
+    max_100_lengths.sort(reverse=True)
+    print(max_100_lengths)
+    print(counter)
+    import matplotlib.pyplot as plt
+    plt.hist(lengths, bins='auto')
+    plt.show()
+
+
+if __name__ == '__main__':
+    # cut long lines
+    # trim_long_lines("datasets/cfg_overfitting_test/collective_output.txt")
+    generate_output("datasets/cfg_overfitting_test")
+
     exit()
+    main()
     # A test to detremine wether to use CFGFast or EmulatedCFG for finding functions in the binary... it turns out
     # should use CFGFast, but remove all undefined symbols that it adds (starts with sub_xxx)
     # binaries = ['core_utils_bins/ls']
@@ -328,4 +429,4 @@ if __name__ == "__main__":
     # print(c)
     # move binaries
     #  ls -al  | grep ^-rwxr | awk '{print $(NF)}' | while read line;do cp $line ~/sec_proj/coreutils_bins;done
-    # 
+    #
