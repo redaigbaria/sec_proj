@@ -22,11 +22,11 @@
 #   step and set this value to the number of cores.
 # PYTHON - python3 interpreter alias.
 
-DATASET_NAME=overfitting_test
+DATASET_NAME=constantless_final
 MAX_DATA_CONTEXTS=1
 MAX_CONTEXTS=1
 SUBTOKEN_VOCAB_SIZE=1
-TARGET_VOCAB_SIZE=452
+TARGET_VOCAB_SIZE=875
 PYTHON=python3
 ###########################################################
 
@@ -34,9 +34,12 @@ PYTHON=python3
 #VAL_DATA_FILE=${DATASET_NAME}.val.raw.txt
 #TEST_DATA_FILE=${DATASET_NAME}.test.raw.txt
 
-TRAIN_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/collective_output.txt
-VAL_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/val.txt
-TEST_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/val.txt
+TRAIN_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/constantless_train_output.txt
+VAL_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/constantless_val_output.txt
+TEST_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/constantless_test_output.txt
+#TRAIN_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/constantless_val_output.txt
+#VAL_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/constantless_overfitting.txt
+#TEST_DATA_FILE=/home/redaigbaria/sec_proj/datasets/cfg_overfitting_test/constantless_overfitting.txt
 
 mkdir -p data
 mkdir -p data/${DATASET_NAME}

@@ -95,7 +95,7 @@ def analyze_func(proj, fun, cfg):
 
 def get_cfg_funcs(proj, binary, excluded):
     return list(filter(None, [f if f.binary_name == binary and (not f.is_plt) and not f.name.startswith(
-        "sub_") and not f.name.startswith("_") and f.name not in excluded and f.symbol.is_export else None for f in
+        "sub_") and not f.name.startswith("_") and f.name not in excluded else None for f in
                               proj.kb.functions.values()]))
 
 
@@ -154,7 +154,7 @@ def gen_new_name(old_name, counters):
     return old_name
 
 
-def varify_cons(cons , var_map=None, counters=None, max_depth=8):
+def varify_cons(cons, var_map=None, counters=None, max_depth=8):
     counters = {'mem': itertools.count(), 'ret': itertools.count()} if counters is None else counters
     var_map = {} if var_map is None else var_map
     new_cons = []
@@ -192,42 +192,26 @@ def analyse_binary(analysed_funcs, binary_name, dataset_dir):
     binary_dir = os.path.join(dataset_dir, f"{binary_name}")
     os.makedirs(binary_dir, exist_ok=True)
     funcs = get_cfg_funcs(proj, binary_name, excluded)
-    output = open(f"{binary_dir}/output.txt", "a")
     print(f"{binary_name} have {len(funcs)} funcs")
     for test_func in funcs:
         if test_func.name in analysed_funcs:
             print(f"skipping {test_func.name}")
             continue
         print(f"analyzing {binary_name}/{test_func.name}")
+        output = open(os.path.join(binary_dir, f"{test_func.name}"), "w")
         # bases_dict.clear()
         # replacement_dict.clear()
         analysed_funcs.add(test_func.name)
         try:
             sm: angr.sim_manager.SimulationManager = analyze_func(proj, test_func, cfg)
-            sm_file = open(os.path.join(binary_dir, f"{test_func.name}.pkl"), "wb")
-            pickle.dump(sm, sm_file)
-            sm_file.close()
-            # exec_paths = sm.deadended
-            # if len(exec_paths) == 0:
-            #     processsed_code = "|".join(list(filter(None, map(block_to_ins, test_func.blocks))))
-            #     output.write(
-            #         f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|NONE,DUM\n")
-            # else:
-            #     counters = {'mem': itertools.count(), 'ret': itertools.count()}
-            #     var_map = {}
-            #     for exec_path in exec_paths:
-            #         blocks = [proj.factory.block(baddr) for baddr in exec_path.history.bbl_addrs]
-            #         processsed_code = "|".join(list(filter(None, map(block_to_ins, blocks))))
-            #         var_map, relified_consts = varify_cons(exec_path.solver.constraints, var_map=var_map, counters=counters)
-            #         relified_consts = "|".join(relified_consts)
-            #         #processed_consts = "|".join(list(filter(None, map(cons_to_triple, exec_path.solver.constraints))))
-            #         #relified_consts = relify(processed_consts)
-            #         output.write(
-            #             f"{tokenize_function_name(test_func.name)} DUM,{processsed_code}|CONS|{relified_consts},DUM\n")
+            # sm_file = open(os.path.join(binary_dir, f"{test_func.name}.pkl"), "wb")
+            # pickle.dump(sm, sm_file)
+            # sm_file.close()
+            sm_to_output(sm, output, test_func.name)
         except Exception as e:
             logging.error(str(e))
             logging.error(f"got an error while analyzing {test_func.name}")
-    output.close()
+        output.close()
     return analysed_funcs
 
 
@@ -281,17 +265,29 @@ def remove_failed_pkls(dataset_path):
                     print(f"{func} failed")
                     failed_funcs.append(func)
 
-    # for failed_func in failed_funcs:
-    #     os.remove(failed_func)
+    for failed_func in failed_funcs:
+        os.remove(failed_func)
     print(set(failed_funcs))
+
+
+def remove_duplicate_funcs(dataset_path):
+    binaries = os.scandir(dataset_path)
+    analysed_funcs = set()
+    for entry in binaries:
+        funcs = list(glob(f"{entry.path}/*"))
+        current_binary_funcs = list(map(lambda x: x[:-len(".pkl")] if x.endswith(".pkl") else x, map(os.path.basename, funcs)))
+        for i, func in enumerate(funcs):
+            if current_binary_funcs[i] in analysed_funcs:
+                os.remove(func)
+        analysed_funcs.update(current_binary_funcs)
 
 
 def get_analysed_funcs(dataset_path):
     binaries = os.scandir(dataset_path)
     analysed_funcs = set()
     for entry in binaries:
-        funcs = glob(f"{entry.path}/*.pkl")
-        analysed_funcs.update(map(lambda x: x[:-len(".pkl")], map(os.path.basename, funcs)))
+        funcs = glob(f"{entry.path}/*")
+        analysed_funcs.update(map(lambda x: x[:-len(".pkl")] if x.endswith(".pkl") else x, map(os.path.basename, funcs)))
 
     return analysed_funcs
 
@@ -300,6 +296,8 @@ def sm_to_output(sm: angr.sim_manager.SimulationManager, output_file, func_name)
     counters = {'mem': itertools.count(), 'ret': itertools.count()}
     var_map = {}
     skipped_lines = 0
+    constants_mapper = dict()
+    constants_counter = itertools.count()
     proj = sm._project
     for exec_paths in sm.stashes.values():
         for exec_path in exec_paths:
@@ -308,6 +306,13 @@ def sm_to_output(sm: angr.sim_manager.SimulationManager, output_file, func_name)
             var_map, relified_consts = varify_cons(exec_path.solver.constraints, var_map=var_map, counters=counters)
             relified_consts = "|".join(relified_consts)
             line = f"{tokenize_function_name(func_name)} DUM,{processsed_code}|CONS|{relified_consts},DUM\n"
+            found_constants = set(re.findall(r"0[xX][0-9a-fA-F]+", line))
+            for constant in found_constants:
+                if constant not in constants_mapper:
+                    constants_mapper[constant] = f"const_{next(constants_counter)}"
+
+            for constant, replacement in sorted(constants_mapper.items(), key=lambda x: len(x[0]), reverse=True):
+                line = line.replace(constant, replacement)
             if len(line) <= 3000:
                 output_file.write(line)
             else:
@@ -315,36 +320,117 @@ def sm_to_output(sm: angr.sim_manager.SimulationManager, output_file, func_name)
     print(f"skipped {skipped_lines} lines")
 
 
+def num_in_sets(set_counts):
+    return set_counts['train'] + set_counts['val'] + set_counts['test']
+
+
+def update_hist(func_hist, funcs, set):
+    for func in funcs:
+        func_counts = func_hist[func]
+        func_counts['free'] -= 1
+        func_counts[set] += 1
+    return func_hist
+
+
+def set_decide(func_hist, funcs):
+    min_func = funcs[0]
+    min_in_set = num_in_sets(func_hist[min_func])
+    for func in funcs:
+        if func not in func_hist:
+            continue
+        curr_in_set = num_in_sets(func_hist[func])
+        if curr_in_set < min_in_set:
+            if curr_in_set != min_in_set or func_hist[func]['free'] > func_hist[min_func]['free']:
+                continue
+            min_func = func
+            min_in_set = curr_in_set
+
+    min_counts = func_hist[min_func]
+    if min_counts['train'] == 0:
+        return update_hist(func_hist, funcs, 'train'), 'train'
+    if min_counts['val'] == 0:
+        return update_hist(func_hist, funcs, 'val'), 'val'
+    if min_counts['test'] == 0:
+        return update_hist(func_hist, funcs, 'test'), 'test'
+
+    if min_counts['train'] / min_in_set < 0.7:
+        return update_hist(func_hist, funcs, 'train'), 'train'
+    elif min_counts['val'] / min_in_set < 0.2:
+        return update_hist(func_hist, funcs, 'val'), 'val'
+    else:
+        return update_hist(func_hist, funcs, 'test'), 'test'
+
+
 def generate_output(dataset_path):
+    def func_name_extractor(x):
+        x = os.path.basename(x)
+        if x.endswith(".pkl"):
+            return x[:-len(".pkl")]
+        return x
+
     binaries = list(os.scandir(dataset_path))
     import numpy as np
     np.random.seed(42)
     np.random.shuffle(binaries)
-    train_output = open(os.path.join(dataset_path, "train_output.txt"), "w")
-    test_output = open(os.path.join(dataset_path, "test_output.txt"), "w")
-    val_output = open(os.path.join(dataset_path, "val_output.txt"), "w")
-    analysed_funcs = set()
-    output = train_output
+    train_output = open(os.path.join(dataset_path, "ady_constantless_train_output.txt"), "w")
+    test_output = open(os.path.join(dataset_path, "ady_constantless_test_output.txt"), "w")
+    val_output = open(os.path.join(dataset_path, "ady_constantless_val_output.txt"), "w")
+    output = test_output
+    mapper = dict()
+    all_funcs = set()
     for i, entry in enumerate(binaries):
-        if i == 50:
-            output = val_output
-        if i == 60:
-            output = test_output
-        funcs = glob(f"{entry.path}/*.pkl")
+        funcs = list(glob(f"{entry.path}/*"))
+        all_funcs.update(funcs)
         for func in funcs:
-            if os.path.basename(func) in analysed_funcs:
-                continue
+            func_name = func_name_extractor(func)
+            func_name = func_name.split("_")
+            for label in func_name:
+                if label not in mapper:
+                    mapper[label] = []
+                mapper[label].append(func)
+
+    # well_named_funcs = set()
+    # names_hists = {name: {'free': len(name_funcs), 'train': 0, 'val': 0, 'test': 0} for name, name_funcs in mapper.items()}
+    # print(names_hists)
+    # exit()
+    for partial in map(lambda x: x[1], filter(lambda x: len(x[1]) >= 3, mapper.items())):
+        well_named_funcs.update(partial)
+    well_named_funcs = list(well_named_funcs)
+
+    # generate output
+    np.random.shuffle(well_named_funcs)
+    print(f"{len(all_funcs)} functions, {len(well_named_funcs)} functions with a name that contains a common word")
+    print("choosing 250 functions for test/validation")
+    for i, func in enumerate(well_named_funcs):
+        if i == 100:
+            output = val_output
+        if i == 250:
+            output = train_output
+        all_funcs.remove(func)
+        if func.endswith(".pkl"):
             with open(func, "rb") as f:
                 try:
-                    func_name = os.path.basename(func)
-                    func_name = func_name[:-len(".pkl")]
-                    analysed_funcs.add(os.path.basename(func))
                     sm = pickle.load(f)
-                    sm_to_output(sm, output, func_name)
+                    sm_to_output(sm, output, func_name_extractor(func))
                 except Exception as e:
                     print(e)
                     print(f"{func} failed")
-                    # failed_funcs.append(func)
+        else:
+            with open(func, "r") as f:
+                output.write(f.read())
+    # what is left add to train
+    for func in all_funcs:
+        if func.endswith(".pkl"):
+            with open(func, "rb") as f:
+                try:
+                    sm = pickle.load(f)
+                    sm_to_output(sm, output, func_name_extractor(func))
+                except Exception as e:
+                    print(e)
+                    print(f"{func} failed")
+        else:
+            with open(func, "r") as f:
+                output.write(f.read())
     train_output.close()
     test_output.close()
     val_output.close()
@@ -387,12 +473,13 @@ def trim_long_lines(file_path):
 
 
 if __name__ == '__main__':
+    pass
     # cut long lines
     # trim_long_lines("datasets/cfg_overfitting_test/collective_output.txt")
-    generate_output("datasets/cfg_overfitting_test")
-
-    exit()
-    main()
+    # generate_output("datasets/cfg_overfitting_test")
+    # remove_failed_pkls("datasets/cfg_overfitting_test")
+    # exit()
+    # main()
     # A test to detremine wether to use CFGFast or EmulatedCFG for finding functions in the binary... it turns out
     # should use CFGFast, but remove all undefined symbols that it adds (starts with sub_xxx)
     # binaries = ['core_utils_bins/ls']
@@ -425,8 +512,3 @@ if __name__ == '__main__':
     # c = 0
     # for k, v in b:
     #     c += v
-    #
-    # print(c)
-    # move binaries
-    #  ls -al  | grep ^-rwxr | awk '{print $(NF)}' | while read line;do cp $line ~/sec_proj/coreutils_bins;done
-    #

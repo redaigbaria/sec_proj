@@ -6,13 +6,41 @@
 # test_data: by default, points to the validation set, since this is the set that
 #   will be evaluated after each training iteration. If you wish to test
 #   on the final (held-out) test set, change 'val' to 'test'.
-type=overfitting_test
-dataset_name=overfitting_test
-data_dir=data/overfitting_test
+type=constantless_final
+dataset_name=constantless_final
+data_dir=data/constantless_final
 data=${data_dir}/${dataset_name}
 test_data=${data_dir}/${dataset_name}.val.c2s
 model_dir=models/${type}
 
 mkdir -p ${model_dir}
 set -e
-python -u code2seq.py --data ${data} --test ${test_data} --save_prefix ${model_dir}/model
+which python3
+python3 code2seq.py --data ${data} --test ${test_data} --save_prefix ${model_dir}/model
+
+
+#type=final
+#dataset_name=final
+#data_dir=data/final
+#data=${data_dir}/${dataset_name}
+#test_data=${data_dir}/${dataset_name}.val.c2s
+#model_dir=models/${type}
+#
+#mkdir -p ${model_dir}
+#set -e
+#python code2seq.py --data ${data} --test ${test_data} --save_prefix ${model_dir}/model  &
+#
+#
+#type=constantless_overfitting
+#dataset_name=constantless_overfitting
+#data_dir=data/constantless_overfitting
+#data=${data_dir}/${dataset_name}
+#test_data=${data_dir}/${dataset_name}.val.c2s
+#model_dir=models/${type}
+#
+#mkdir -p ${model_dir}
+#set -e
+#python code2seq.py --data ${data} --test ${test_data} --save_prefix ${model_dir}/model &
+#
+
+wait
