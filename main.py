@@ -4,7 +4,6 @@ import angr
 import os
 import pickle
 import re
-import shutil
 import time
 import logging
 import json
@@ -244,20 +243,6 @@ def get_functions_histogram():
     b.sort(key=lambda x: x[1], reverse=True)
     print(b)
 
-    #
-    # def canonicalize(self, var_map=None, counter=None):
-    #     counter = itertools.count() if counter is None else counter
-    #     var_map = { } if var_map is None else var_map
-    #
-    #     for v in self.leaf_asts():
-    #         if v.cache_key not in var_map and v.op in { 'BVS', 'BoolS', 'FPS' }:
-    #             new_name = 'canonical_%d' % next(counter)
-    #             var_map[v.cache_key] = v._rename(new_name)
-    #
-    #     return var_map, counter, self.replace_dict(var_map)
-    #
-    # #
-
 
 def remove_failed_pkls(dataset_path):
     binaries = os.scandir(dataset_path)
@@ -486,6 +471,7 @@ def generate_output(dataset_path):
 
 def main():
     parser = argparse.ArgumentParser()
+    # we did this in order to parallelize the analysis process
     parser.add_argument("--binary_idx", type=int, required=True)
     args = parser.parse_args()
     binaries = os.listdir("coreutils_bins")
@@ -521,7 +507,7 @@ def trim_long_lines(file_path):
 
 
 if __name__ == '__main__':
-    pass
+    main()
     # cut long lines
     # trim_long_lines("datasets/cfg_overfitting_test/collective_output.txt")
     # generate_output("datasets/cfg_overfitting_test")
