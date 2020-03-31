@@ -1,4 +1,4 @@
-# sec_proj
+# Automatic functionality recognition in a binary 
 
 Hi,
 
