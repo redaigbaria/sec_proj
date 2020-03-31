@@ -6,18 +6,15 @@
 # test_data: by default, points to the validation set, since this is the set that
 #   will be evaluated after each training iteration. If you wish to test
 #   on the final (held-out) test set, change 'val' to 'test'.
-type=constantless_final
-dataset_name=constantless_final
-data_dir=data/constantless_final
+type=really_final_constantless
+dataset_name=really_final_constantless
+data_dir=/home/redaigbaria/sec_proj/code2seq/data/really_final_constantless
 data=${data_dir}/${dataset_name}
 test_data=${data_dir}/${dataset_name}.val.c2s
-model_dir=models/${type}
+model_dir=/home/redaigbaria/sec_proj/code2seq/models/${type}
 
 mkdir -p ${model_dir}
-set -e
-which python3
-python3 code2seq.py --data ${data} --test ${test_data} --save_prefix ${model_dir}/model
-
+python3 -u code2seq.py --data ${data} --test ${test_data} --save_prefix ${model_dir}/model &
 
 #type=final
 #dataset_name=final
@@ -27,7 +24,6 @@ python3 code2seq.py --data ${data} --test ${test_data} --save_prefix ${model_dir
 #model_dir=models/${type}
 #
 #mkdir -p ${model_dir}
-#set -e
 #python code2seq.py --data ${data} --test ${test_data} --save_prefix ${model_dir}/model  &
 #
 #
@@ -39,7 +35,6 @@ python3 code2seq.py --data ${data} --test ${test_data} --save_prefix ${model_dir
 #model_dir=models/${type}
 #
 #mkdir -p ${model_dir}
-#set -e
 #python code2seq.py --data ${data} --test ${test_data} --save_prefix ${model_dir}/model &
 #
 

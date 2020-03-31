@@ -83,6 +83,8 @@ def analyze_func(proj, fun, cfg):
     call_state = proj.factory.call_state(fun.addr, add_options={
         'CALLLESS': True, 'NO_SYMBOLIC_SYSCALL_RESOLUTION': True
     })
+    # dropped the relativization in the last moment due to time consedirations, and we think that the address_breakfun
+    # need to be checked again...
     # call_state.inspect.b('address_concretization', when=angr.BP_AFTER, action=address_breakfun)
     sm = proj.factory.simulation_manager(call_state)
     sm.use_technique(angr.exploration_techniques.LoopSeer(cfg=cfg, bound=2))
@@ -94,6 +96,9 @@ def analyze_func(proj, fun, cfg):
 
 
 def get_cfg_funcs(proj, binary, excluded):
+    """
+    get functions that are suitable for analysis, (funcs that are defined in the binary and not libc funcs...)
+    """
     return list(filter(None, [f if f.binary_name == binary and (not f.is_plt) and not f.name.startswith(
         "sub_") and not f.name.startswith("_") and f.name not in excluded else None for f in
                               proj.kb.functions.values()]))
@@ -155,6 +160,9 @@ def gen_new_name(old_name, counters):
 
 
 def varify_cons(cons, var_map=None, counters=None, max_depth=8):
+    """
+    abstract away constants from the constraints
+    """
     counters = {'mem': itertools.count(), 'ret': itertools.count()} if counters is None else counters
     var_map = {} if var_map is None else var_map
     new_cons = []
@@ -187,7 +195,6 @@ def analyse_binary(analysed_funcs, binary_name, dataset_dir):
     excluded = {'main', 'usage', 'exit'}.union(analysed_funcs)
     proj = angr.Project(binary_name, auto_load_libs=False)
     cfg = proj.analyses.CFGFast()
-    # cfg = proj.analyses.CFGEmulated()
     binary_name = os.path.basename(binary_name)
     binary_dir = os.path.join(dataset_dir, f"{binary_name}")
     os.makedirs(binary_dir, exist_ok=True)
@@ -204,6 +211,7 @@ def analyse_binary(analysed_funcs, binary_name, dataset_dir):
         analysed_funcs.add(test_func.name)
         try:
             sm: angr.sim_manager.SimulationManager = analyze_func(proj, test_func, cfg)
+            # we first tried to save the analysis results as a pickle file, but some pickle dumps failed..
             # sm_file = open(os.path.join(binary_dir, f"{test_func.name}.pkl"), "wb")
             # pickle.dump(sm, sm_file)
             # sm_file.close()
@@ -324,18 +332,25 @@ def num_in_sets(set_counts):
     return set_counts['train'] + set_counts['val'] + set_counts['test']
 
 
-def update_hist(func_hist, funcs, set):
-    for func in funcs:
+def update_hist(func_hist, name_parts, set):
+    for func in name_parts:
         func_counts = func_hist[func]
         func_counts['free'] -= 1
         func_counts[set] += 1
     return func_hist
 
 
-def set_decide(func_hist, funcs):
-    min_func = funcs[0]
+def set_decide(func_hist, name_parts, global_counters):
+    """
+    here we tried to devide the inputs between the train/val/test sets such that there is more shared names between the
+    sets
+    :param func_hist: counters for each name, how many times it appeared in each set
+    :param name_parts: names that consist the function name ( '_' seperated function name)
+    :return: set to place this function in
+    """
+    min_func = name_parts[0]
     min_in_set = num_in_sets(func_hist[min_func])
-    for func in funcs:
+    for func in name_parts:
         if func not in func_hist:
             continue
         curr_in_set = num_in_sets(func_hist[func])
@@ -347,21 +362,36 @@ def set_decide(func_hist, funcs):
 
     min_counts = func_hist[min_func]
     if min_counts['train'] == 0:
-        return update_hist(func_hist, funcs, 'train'), 'train'
+        return update_hist(func_hist, name_parts, 'train'), 'train'
     if min_counts['val'] == 0:
-        return update_hist(func_hist, funcs, 'val'), 'val'
+        return update_hist(func_hist, name_parts, 'val'), 'val'
     if min_counts['test'] == 0:
-        return update_hist(func_hist, funcs, 'test'), 'test'
+        return update_hist(func_hist, name_parts, 'test'), 'test'
 
-    if min_counts['train'] / min_in_set < 0.7:
-        return update_hist(func_hist, funcs, 'train'), 'train'
-    elif min_counts['val'] / min_in_set < 0.2:
-        return update_hist(func_hist, funcs, 'val'), 'val'
+    total_samples = sum(global_counters.values())
+    if global_counters['train'] / total_samples < 0.7:
+        return update_hist(func_hist, name_parts, 'train'), 'train'
+    elif global_counters['val'] / total_samples < 0.2:
+        return update_hist(func_hist, name_parts, 'val'), 'val'
     else:
-        return update_hist(func_hist, funcs, 'test'), 'test'
+        return update_hist(func_hist, name_parts, 'test'), 'test'
+
+
+def gen_shared_name(func_hist, funcs):
+    shared_funcs = []
+    for func in funcs:
+        if func in func_hist:
+            shared_funcs.append(func)
+    return shared_funcs
 
 
 def generate_output(dataset_path):
+    """
+    this is the experimentation code at the last experiments, we tried to add to the test/val sets only functions that
+    have a name part the appeared at least 3 times in the dataset, later we tried to remove from the label the name parts
+    that didn't appear more than 3 times, and wrote a function that divides the training functions in a way that
+    promotes sharing names across train/val/test sets
+    """
     def func_name_extractor(x):
         x = os.path.basename(x)
         if x.endswith(".pkl"):
@@ -375,7 +405,6 @@ def generate_output(dataset_path):
     train_output = open(os.path.join(dataset_path, "ady_constantless_train_output.txt"), "w")
     test_output = open(os.path.join(dataset_path, "ady_constantless_test_output.txt"), "w")
     val_output = open(os.path.join(dataset_path, "ady_constantless_val_output.txt"), "w")
-    output = test_output
     mapper = dict()
     all_funcs = set()
     for i, entry in enumerate(binaries):
@@ -389,10 +418,9 @@ def generate_output(dataset_path):
                     mapper[label] = []
                 mapper[label].append(func)
 
-    # well_named_funcs = set()
-    # names_hists = {name: {'free': len(name_funcs), 'train': 0, 'val': 0, 'test': 0} for name, name_funcs in mapper.items()}
-    # print(names_hists)
-    # exit()
+    well_named_funcs = set()
+    popular_names = filter(lambda x: len(x[1]) >= 3, mapper.items())
+    names_hists = {name: {'free': len(name_funcs), 'train': 0, 'val': 0, 'test': 0} for name, name_funcs in popular_names}
     for partial in map(lambda x: x[1], filter(lambda x: len(x[1]) >= 3, mapper.items())):
         well_named_funcs.update(partial)
     well_named_funcs = list(well_named_funcs)
@@ -400,37 +428,57 @@ def generate_output(dataset_path):
     # generate output
     np.random.shuffle(well_named_funcs)
     print(f"{len(all_funcs)} functions, {len(well_named_funcs)} functions with a name that contains a common word")
-    print("choosing 250 functions for test/validation")
+    # print("choosing 250 functions for test/validation")
+
+    global_counters = {'train': 0, 'val': 0, 'test': 0}
     for i, func in enumerate(well_named_funcs):
-        if i == 100:
-            output = val_output
-        if i == 250:
+        # if i == 100:
+        #     output = val_output
+        # if i == 250:
+        #     output = train_output
+        func_name_parts = func_name_extractor(func).split("_")
+        print_name = gen_shared_name(names_hists, func_name_parts)
+        names_hists, dest = set_decide(names_hists, print_name, global_counters)
+        global_counters[dest] += 1
+        print_name = "|".join(print_name)
+        if dest == 'train':
             output = train_output
+        elif dest == 'test':
+            output = test_output
+        else:
+            output = val_output
+
+        print(f"shared name: {print_name}")
         all_funcs.remove(func)
         if func.endswith(".pkl"):
             with open(func, "rb") as f:
                 try:
                     sm = pickle.load(f)
-                    sm_to_output(sm, output, func_name_extractor(func))
+                    sm_to_output(sm, output, print_name)
                 except Exception as e:
                     print(e)
                     print(f"{func} failed")
         else:
             with open(func, "r") as f:
-                output.write(f.read())
+                for line in f:
+                    line = line.split(" ")
+                    line[0] = print_name
+                    line = " ".join(line)
+                    output.write(line)
     # what is left add to train
-    for func in all_funcs:
-        if func.endswith(".pkl"):
-            with open(func, "rb") as f:
-                try:
-                    sm = pickle.load(f)
-                    sm_to_output(sm, output, func_name_extractor(func))
-                except Exception as e:
-                    print(e)
-                    print(f"{func} failed")
-        else:
-            with open(func, "r") as f:
-                output.write(f.read())
+    # output = train_output
+    # for func in all_funcs:
+    #     if func.endswith(".pkl"):
+    #         with open(func, "rb") as f:
+    #             try:
+    #                 sm = pickle.load(f)
+    #                 sm_to_output(sm, output, func_name_extractor(func))
+    #             except Exception as e:
+    #                 print(e)
+    #                 print(f"{func} failed")
+    #     else:
+    #         with open(func, "r") as f:
+    #             output.write(f.read())
     train_output.close()
     test_output.close()
     val_output.close()
